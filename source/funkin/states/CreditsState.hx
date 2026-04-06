@@ -37,10 +37,18 @@ abstract CreditsData(Array<String>) from Array<String>
 	public var bgColour(get, never):FlxColor;
 	
 	function get_bgColour() return FlxColor.fromString(this[4] ?? 'WHITE') ?? FlxColor.WHITE;
+
+	public var setAnimIcon(get, never):Bool;
+	
+	function get_setAnimIcon() return this.length >= 6;
+	
+	public var nameAnim(get, never):String;
+	
+	function get_nameAnim() return this[5] ?? '';
 	
 	public var modDirectory(get, never):Null<String>;
 	
-	function get_modDirectory() return this[5];
+	function get_modDirectory() return this[6];
 }
 
 // todo rewrite this menu
@@ -147,7 +155,7 @@ class CreditsState extends MusicBeatState
 				Mods.currentModDirectory = credits[i].modDirectory;
 			}
 			
-			var icon:AttachedSprite = new AttachedSprite('credits/${credits[i].iconPath}');
+			var icon:AttachedSprite = new AttachedSprite('credits/${credits[i].iconPath}', credits[i].setAnimIcon ? credits[i].nameAnim : null, null, true);
 			icon.setGraphicSize(130);
 			icon.updateHitbox();
 			icon.xAdd = optionText.width + 10;
@@ -304,7 +312,7 @@ class CreditsState extends MusicBeatState
 				for (i in firstarray)
 				{
 					var arr:Array<String> = i.replace('\\n', '\n').split("::");
-					if (arr.length >= 5) arr.push(folder);
+					if (arr.length >= 6) arr.push(folder);
 					credits.push(arr);
 				}
 				credits.push(['']);
