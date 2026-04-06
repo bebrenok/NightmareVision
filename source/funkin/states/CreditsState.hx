@@ -130,7 +130,7 @@ class CreditsState extends MusicBeatState
 		
 		initStateScript();
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
 		add(bg);
 		bg.screenCenter();
 		
@@ -155,13 +155,13 @@ class CreditsState extends MusicBeatState
 				Mods.currentModDirectory = credits[i].modDirectory;
 			}
 			
-			var icon:AttachedSprite = new AttachedSprite('credits/${credits[i].iconPath}', credits[i].setAnimIcon ? credits[i].nameAnim : null, null, true);
+			var icon:AttachedSprite = new AttachedSprite('branding/credits/${credits[i].iconPath}', credits[i].setAnimIcon ? credits[i].nameAnim : null, null, true);
 			icon.setGraphicSize(130);
 			icon.updateHitbox();
 			icon.xAdd = optionText.width + 10;
 			icon.sprTracker = optionText;
 			icon.copyVisible = false;
-			icon.visible = Paths.fileExists('images/credits/${credits[i].iconPath}.png');
+			icon.visible = Paths.fileExists('images/branding/credits/${credits[i].iconPath}.png');
 			add(icon);
 			
 			Mods.currentModDirectory = '';

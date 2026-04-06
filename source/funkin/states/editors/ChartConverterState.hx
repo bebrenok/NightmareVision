@@ -43,7 +43,7 @@ class ChartConverterState extends MusicBeatState
 		
 		persistentUpdate = true;
 		
-		bg = new FlxSprite(Paths.image('menuDesat'));
+		bg = new FlxSprite(Paths.image('menus/menuDesat'));
 		bg.scrollFactor.set();
 		bg.color = 0xFF4D3551;
 		add(bg);

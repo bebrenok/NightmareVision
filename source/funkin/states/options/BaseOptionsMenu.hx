@@ -44,7 +44,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		scriptGroup.set('this', this);
 		scriptGroup.set('title', title);
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
 		add(bg);

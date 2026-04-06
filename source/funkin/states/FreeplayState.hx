@@ -104,7 +104,7 @@ class FreeplayState extends MusicBeatState
 		scriptGroup.set('SongMetadata', SongMetadata);
 		scriptGroup.set('WeekData', WeekData);
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
 		add(bg);
 		bg.screenCenter();
 		

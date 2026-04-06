@@ -57,14 +57,14 @@ class MainMenuState extends MusicBeatState
 		
 		final yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
 		
-		var bg:FlxSprite = new FlxSprite(-80, 0, Paths.image('menuBG'));
+		var bg:FlxSprite = new FlxSprite(-80, 0, Paths.image('menus/menuBG'));
 		bg.scrollFactor.set(0, yScroll);
 		bg.scale.scale(1.175);
 		bg.updateHitbox();
 		bg.screenCenter();
 		add(bg);
 		
-		magenta = new FlxSprite(-80, 0, Paths.image('menuDesat'));
+		magenta = new FlxSprite(-80, 0, Paths.image('menus/menuDesat'));
 		magenta.scrollFactor.copyFrom(bg.scrollFactor);
 		magenta.scale.copyFrom(bg.scale);
 		magenta.updateHitbox();
@@ -81,7 +81,7 @@ class MainMenuState extends MusicBeatState
 			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
 			
 			final menuItem:FlxSprite = new FlxSprite(0, (i * 140) + offset);
-			menuItem.frames = Paths.getSparrowAtlas('mainmenu/menu_' + optionShit[i]);
+			menuItem.frames = Paths.getSparrowAtlas('menus/mainmenu/menu_' + optionShit[i]);
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');

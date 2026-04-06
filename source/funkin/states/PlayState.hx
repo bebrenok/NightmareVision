@@ -1123,7 +1123,7 @@ class PlayState extends MusicBeatState
 	
 	function makeCountdownSprite(path:String):FlxSprite
 	{
-		final spr = new FlxSprite().loadGraphic(Paths.image(path));
+		final spr = new FlxSprite().loadGraphic(Paths.image(Paths.COUNTDOWN_PREFIX + path));
 		spr.scrollFactor.set();
 		spr.updateHitbox();
 		
@@ -1917,7 +1917,7 @@ class PlayState extends MusicBeatState
 				
 				daNote.spriteOffset.x = (_skin.noteOffsets[daNote.noteData].x + daNote.offsetX);
 				daNote.spriteOffset.y = (_skin.noteOffsets[daNote.noteData].y + daNote.offsetY);
-					
+				
 				if (daNote.isSustainNote)
 				{
 					final futureSongPos = Conductor.getBeat(Conductor.songPosition + daNote.sustainLength);

@@ -54,11 +54,11 @@ class NoteUtil
 	// constants
 	public static final DEFAULT_KEYS:Int = 4;
 	
-	public static final DEFAULT_TEXTURE:String = 'NOTE_assets';
+	public static final DEFAULT_TEXTURE:String = 'UI/notes/NOTE_assets';
 	
-	public static final DEFAULT_SPLASH_TEXTURE:String = 'noteSplashes';
+	public static final DEFAULT_SPLASH_TEXTURE:String = 'UI/notes/noteSplashes';
 	
-	public static final DEFAULT_SUSTAIN_SPLASH_TEXTURE:String = 'sustainHold';
+	public static final DEFAULT_SUSTAIN_SPLASH_TEXTURE:String = 'UI/notes/sustainHold';
 	
 	public static final DEFAULT_NOTE_ANIMATIONS:Array<Array<Animation>> = [
 		[

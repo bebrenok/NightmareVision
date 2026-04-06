@@ -73,6 +73,16 @@ typedef ModMeta =
 	 * Optional font that will replace most seen text in the game.
 	 */
 	var ?defaultFont:String;
+	
+	/**
+	 * Prefixes that tell the game where the combo, ratings & countdown graphics are located.
+	 * Ignore the weird formatting I'll fix it later
+	 */
+	var ?uiPrefix:String;
+	
+	var ?comboPrefix:String;
+	var ?ratingsPrefix:String;
+	var ?countdownPrefix:String;
 }
 
 typedef ModsList =
@@ -382,6 +392,13 @@ class Mods
 		else funkin.api.DiscordClient.rpcId = DiscordClient.NMV_ID;
 		
 		Paths.DEFAULT_FONT = pack.defaultFont != null && FunkinAssets.exists(Paths.font(pack.defaultFont)) ? Paths.font(pack.defaultFont) : Paths.font('vcr.ttf');
+		
+		inline function dirExists(dir:String):Bool return dir != null && FunkinAssets.isDirectory('content/${Mods.currentModDirectory}/images/$dir');
+		
+		Paths.UI_PREFIX = dirExists(pack.uiPrefix) ? pack.uiPrefix : 'UI/';
+		Paths.COMBO_PREFIX = dirExists(pack.comboPrefix) ? pack.comboPrefix : 'UI/combo/';
+		Paths.RATINGS_PREFIX = dirExists(pack.ratingsPrefix) ? pack.ratingsPrefix : 'UI/ratings/';
+		Paths.COUNTDOWN_PREFIX = dirExists(pack.countdownPrefix) ? pack.countdownPrefix : 'UI/countdown/';
 	}
 	
 	public static function getModIcon(mod:String):String
@@ -408,7 +425,6 @@ class Mods
 		var retVal = Paths.font('vcr.ttf');
 		var pack = getPack(mod);
 		if (pack != null && pack.defaultFont != null) retVal = Paths.font(pack.defaultFont);
-		trace(retVal);
 		return retVal;
 	}
 }

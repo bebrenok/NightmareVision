@@ -71,7 +71,7 @@ class StoryMenuState extends MusicBeatState
 		rankText.size = scoreText.size;
 		rankText.screenCenter(X);
 		
-		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+		var ui_tex = Paths.getSparrowAtlas('menus/story/ui_elements');
 		var bgYellow:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 386, 0xFFF9CF51);
 		bgSprite = new FlxSprite(0, 56);
 		
@@ -160,7 +160,7 @@ class StoryMenuState extends MusicBeatState
 		add(bgSprite);
 		add(grpWeekCharacters);
 		
-		var tracksSprite:FlxSprite = new FlxSprite(FlxG.width * 0.07, bgSprite.y + 425).loadGraphic(Paths.image('Menu_Tracks'));
+		var tracksSprite:FlxSprite = new FlxSprite(FlxG.width * 0.07, bgSprite.y + 425).loadGraphic(Paths.image('menus/story/Menu_Tracks'));
 		add(tracksSprite);
 		
 		txtTracklist = new FlxText(FlxG.width * 0.05, tracksSprite.y + 60, 0, "", 32);
@@ -335,7 +335,7 @@ class StoryMenuState extends MusicBeatState
 		WeekData.setDirectoryFromWeek(loadedWeeks[curWeek]);
 		
 		var diff:String = Difficulty.difficulties[curDifficulty];
-		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.sanitize(diff));
+		var newImage:FlxGraphic = Paths.image('menus/story/difficulties/' + Paths.sanitize(diff));
 		// trace(Mods.currentModDirectory + ', menudifficulties/' + Paths.sanitize(diff));
 		
 		if (sprDifficulty.graphic != newImage)
@@ -399,7 +399,7 @@ class StoryMenuState extends MusicBeatState
 		}
 		else
 		{
-			bgSprite.loadGraphic(Paths.image('menubackgrounds/menu_' + assetName));
+			bgSprite.loadGraphic(Paths.image('menus/story/bgs/menu_' + assetName));
 		}
 		PlayState.storyMeta.curWeek = curWeek;
 		

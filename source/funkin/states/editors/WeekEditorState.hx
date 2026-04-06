@@ -348,9 +348,9 @@ class WeekEditorState extends MusicBeatState
 		var isMissing:Bool = true;
 		if (assetName != null && assetName.length > 0)
 		{
-			if (FunkinAssets.exists(Paths.getPath('images/storymenu/$assetName.png', null, true)))
+			if (FunkinAssets.exists(Paths.getPath('images/menus/story/$assetName.png', null, true)))
 			{
-				weekThing.loadGraphic(Paths.image('storymenu/$assetName'));
+				weekThing.loadGraphic(Paths.image('menus/story/$assetName'));
 				isMissing = false;
 			}
 		}
@@ -359,7 +359,7 @@ class WeekEditorState extends MusicBeatState
 		{
 			weekThing.visible = false;
 			missingFileText.visible = true;
-			missingFileText.text = 'MISSING FILE: images/storymenu/' + assetName + '.png';
+			missingFileText.text = 'MISSING FILE: images/menus/story/' + assetName + '.png';
 		}
 		recalculateStuffPosition();
 		
@@ -630,7 +630,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 	
 	override function create()
 	{
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
 		
 		bg.color = FlxColor.WHITE;
 		add(bg);

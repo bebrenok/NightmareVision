@@ -51,7 +51,7 @@ class ModsState extends MusicBeatState
 		}
 		// modList = Mods.getModDirectories();
 		
-		bg = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
+		bg = new FlxSprite().loadGraphic(Paths.image("menus/menuDesat"));
 		add(bg);
 		
 		txtbox = new FlxSprite(50).makeGraphic(200, 500, FlxColor.BLACK);
@@ -64,7 +64,7 @@ class ModsState extends MusicBeatState
 		listtxt.text = 'poo';
 		add(listtxt);
 		
-		box = new FlxSprite().loadGraphic(Paths.image("mods/menubox"));
+		box = new FlxSprite().loadGraphic(Paths.image("menus/mods/menubox"));
 		// box.scale.set(1.3, 1.3);
 		box.updateHitbox();
 		box.screenCenter();
@@ -83,13 +83,13 @@ class ModsState extends MusicBeatState
 		icon = new FlxSprite().loadGraphic(Paths.image('icon64'));
 		add(icon);
 		
-		checkbox = new FlxSprite(1000, 110).loadGraphic(Paths.image("mods/menucheck1"));
+		checkbox = new FlxSprite(1000, 110).loadGraphic(Paths.image("menus/mods/menucheck1"));
 		checkbox.scale.set(0.625, 0.625);
 		checkbox.updateHitbox();
 		add(checkbox);
 		
-		add(new FlxSprite().loadGraphic(Paths.image("mods/menuborder1")));
-		add(new FlxSprite(685, 645).loadGraphic(Paths.image("mods/menuborder2")));
+		add(new FlxSprite().loadGraphic(Paths.image("menus/mods/menuborder1")));
+		add(new FlxSprite(685, 645).loadGraphic(Paths.image("menus/mods/menuborder2")));
 		
 		changeDir(0);
 	}
@@ -159,9 +159,9 @@ class ModsState extends MusicBeatState
 		description.text = text;
 		description.setPosition(box.x + 10, box.y + 65);
 		
-		var daValue = isModEnabled(modList[curDir].folder) ? ("mods/menucheck2") : ("mods/menucheck1");
+		var daValue = isModEnabled(modList[curDir].folder) ? ("menus/mods/menucheck2") : ("menus/mods/menucheck1");
 		checkbox.loadGraphic(Paths.image(daValue));
-		checkbox.y = daValue == 'mods/menucheck2' ? 104 : 127;
+		checkbox.y = daValue == 'menus/mods/menucheck2' ? 104 : 127;
 		
 		handleListTxt();
 	}
@@ -172,9 +172,9 @@ class ModsState extends MusicBeatState
 		
 		mod.enabled = !mod.enabled;
 		
-		var daValue = mod.enabled ? ("mods/menucheck2") : ("mods/menucheck1");
+		var daValue = mod.enabled ? ("menus/mods/menucheck2") : ("menus/mods/menucheck1");
 		checkbox.loadGraphic(Paths.image(daValue));
-		checkbox.y = daValue == 'mods/menucheck2' ? 104 : 127;
+		checkbox.y = daValue == 'menus/mods/menucheck2' ? 104 : 127;
 		
 		if (!mod.enabled && mod.folder == topMod)
 		{

@@ -34,6 +34,16 @@ class Paths
 	 */
 	public static var DEFAULT_FONT:String = 'vcr.ttf';
 	
+	/**
+	 * Prefix that tells the game where certain UI elements are located.
+	 */
+	public static var COMBO_PREFIX:String = 'UI/combo/';
+	
+	public static var RATINGS_PREFIX:String = 'UI/ratings/';
+	public static var COUNTDOWN_PREFIX:String = 'UI/countdown/';
+	public static var UI_PREFIX:String = 'UI/';
+	
+	// , , ,
 	@:allow(funkin.backend.FunkinCache)
 	static var tempAtlasFramesCache:Map<String, FlxAtlasFrames> = []; // maybe instead of this make a txt cache ?
 	

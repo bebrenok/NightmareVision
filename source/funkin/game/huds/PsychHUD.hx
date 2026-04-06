@@ -25,6 +25,8 @@ class PsychHUD extends BaseHUD
 	
 	var ratingPrefix:String = "";
 	var ratingSuffix:String = '';
+	var comboPrefix:String = "";
+	
 	var textDivider = '|';
 	var showRating:Bool = ClientPrefs.showRatings;
 	var showRatingNum:Bool = ClientPrefs.showRatings;
@@ -38,7 +40,12 @@ class PsychHUD extends BaseHUD
 	{
 		name = 'PSYCH';
 		
-		healthBar = new Bar(0, FlxG.height * (!ClientPrefs.downScroll ? 0.89 : 0.11), 'healthBar', function() return parent.health, parent.healthBounds.min, parent.healthBounds.max);
+		ratingPrefix = Paths.RATINGS_PREFIX;
+		comboPrefix = Paths.COMBO_PREFIX;
+		
+		final healthGraphic = FunkinAssets.exists(Paths.mods('images/${Paths.UI_PREFIX}healthBar')) ? '${Paths.UI_PREFIX}healthBar' : 'UI/healthBar';
+		
+		healthBar = new Bar(0, FlxG.height * (!ClientPrefs.downScroll ? 0.89 : 0.11), healthGraphic, function() return parent.health, parent.healthBounds.min, parent.healthBounds.max);
 		healthBar.screenCenter(X);
 		healthBar.leftToRight = false;
 		healthBar.scrollFactor.set();
@@ -77,7 +84,9 @@ class PsychHUD extends BaseHUD
 		if (ClientPrefs.downScroll) timeTxt.y = FlxG.height - 44;
 		if (ClientPrefs.timeBarType == 'Song Name') timeTxt.text = PlayState.SONG.song;
 		
-		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timeBar', function() return parent.songPercent, 0, 1);
+		final timeGraphic = FunkinAssets.exists(Paths.mods('images/${Paths.UI_PREFIX}timeBar')) ? '${Paths.UI_PREFIX}timeBar' : 'UI/timeBar';
+		
+		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), timeGraphic, function() return parent.songPercent, 0, 1);
 		timeBar.scrollFactor.set();
 		timeBar.screenCenter(X);
 		timeBar.alpha = 0;
@@ -102,6 +111,7 @@ class PsychHUD extends BaseHUD
 		parent.scripts.set('timeTxt', timeTxt);
 		parent.scripts.set('ratingPrefix', ratingPrefix);
 		parent.scripts.set('ratingSuffix', ratingSuffix);
+		parent.scripts.set('comboPrefix', comboPrefix);
 		parent.scripts.set('comboOffsets', comboOffsets);
 		
 		if (comboOffsets == null)
@@ -306,7 +316,7 @@ class PsychHUD extends BaseHUD
 				var numScore:FlxSprite = ratingNumGroup.recycle(FlxSprite);
 				FlxTween.cancelTweensOf(numScore);
 				
-				numScore.loadGraphic(Paths.image(ratingPrefix + 'num' + Std.int(i) + ratingSuffix));
+				numScore.loadGraphic(Paths.image(comboPrefix + 'num' + Std.int(i) + ratingSuffix));
 				numScore.alpha = 1;
 				numScore.screenCenter();
 				numScore.x = posX + (43 * daLoop) - 90;
@@ -347,7 +357,7 @@ class PsychHUD extends BaseHUD
 		
 		for (i in 0...10)
 		{
-			Paths.image('${ratingPrefix}num$i$ratingSuffix');
+			Paths.image('${comboPrefix}num$i$ratingSuffix');
 		}
 	}
 }

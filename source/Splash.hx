@@ -72,18 +72,18 @@ class Splash extends FlxState
 	function logoFunc()
 	{
 		var folder:Array<String> = [];
-		if (!FileSystem.isDirectory('assets/images/branding') || (folder = FileSystem.readDirectory('assets/images/branding')).length == 0)
+		if (!FileSystem.isDirectory('assets/images/branding/watermarks') || (folder = FileSystem.readDirectory('assets/images/branding/watermarks')).length == 0)
 		{
 			finish();
 			return;
 		}
 		
-		folder = folder.filter(str -> !FileSystem.isDirectory('assets/images/branding/$str'));
+		folder = folder.filter(str -> !FileSystem.isDirectory('assets/images/branding/watermarks/$str'));
 		
 		var img = FlxG.random.getObject(folder);
 		trace(folder);
 		
-		logo = new FlxSprite().loadGraphic(Paths.image('branding/${Path.withoutExtension(img)}'));
+		logo = new FlxSprite().loadGraphic(Paths.image('branding/watermarks/${Path.withoutExtension(img)}'));
 		logo.screenCenter();
 		logo.visible = false;
 		add(logo);

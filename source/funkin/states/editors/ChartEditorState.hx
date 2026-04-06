@@ -381,7 +381,7 @@ class ChartEditorState extends haxe.ui.backend.flixel.UIState
 		gradient = new FlxBackdrop(null, Y);
 		add(gradient);
 		
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
 		bg.scrollFactor.set();
 		add(bg);
 		createFriends();
