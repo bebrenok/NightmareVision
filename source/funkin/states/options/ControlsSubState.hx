@@ -1,5 +1,14 @@
 package funkin.states.options;
 
+import flixel.FlxObject;
+import flixel.group.FlxSpriteContainer;
+
+import funkin.backend.Controls.Action;
+
+import flixel.group.FlxContainer;
+
+import funkin.backend.Controls.Device;
+
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -12,111 +21,145 @@ import funkin.backend.MusicBeatSubstate;
 
 class ControlsSubState extends MusicBeatSubstate
 {
-	private static var curSelected:Int = -1;
-	private static var curAlt:Bool = false;
+	public static inline var NONE:Int = -2;
 	
 	private static var defaultKey:String = 'Reset to Default Keys';
 	
-	private var bindLength:Int = 0;
+	public var device(default, set):Device;
 	
-	var optionShit:Array<Dynamic> = [
-		['NOTES'],
-		['Left', 'note_left'],
-		['Down', 'note_down'],
-		['Up', 'note_up'],
-		['Right', 'note_right'],
-		[''],
-		['UI'],
-		['Left', 'ui_left'],
-		['Down', 'ui_down'],
-		['Up', 'ui_up'],
-		['Right', 'ui_right'],
-		[''],
-		['Reset', 'reset'],
-		['Accept', 'accept'],
-		['Back', 'back'],
-		['Pause', 'pause'],
-		[''],
-		['VOLUME'],
-		['Mute', 'volume_mute'],
-		['Up', 'volume_up'],
-		['Down', 'volume_down'],
-		[''],
-		['DEBUG'],
-		['Key 1', 'debug_1'],
-		['Key 2', 'debug_2']
-	];
+	public var index(default, set):Int = -1;
 	
-	private var grpOptions:FlxTypedGroup<Alphabet>;
-	private var grpInputs:Array<AttachedAlphabet> = [];
-	private var grpInputsAlt:Array<AttachedAlphabet> = [];
-	var rebindingKey:Bool = false;
-	var nextAccept:Int = 5;
+	public var currentGroup(get, set):ControlsGroup;
 	
-	public function new()
+	public var currentOption(get, set):ControlsOption;
+	
+	public var currentBind(get, set):Alphabet;
+	
+	public var currentBindIndex(get, set):Int;
+	
+	public var state:BindState = BindState.NONE;
+	
+	var optionsList:Array<ControlsOption> = [];
+	
+	var controlsGroup = new FlxTypedContainer<ControlsGroup>();
+	
+	var camPos:FlxObject;
+	
+	var resetKeysLabel:Alphabet;
+	var resetGamepadLabel:Alphabet;
+	
+	public function new(device:Device)
 	{
 		super();
+		
+		camera = new FlxCamera();
+		FlxG.cameras.add(camera);
+		
+		camPos = new FlxObject();
+		camPos.screenCenter();
+		camPos.y -= 600;
+		camera.follow(camPos);
+		add(camPos);
 		
 		initStateScript('ControlsSubState');
 		scriptGroup.set('this', this);
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menus/menuDesat'));
+		bg.scrollFactor.y = 0;
 		bg.color = 0xFFea71fd;
 		bg.screenCenter();
 		add(bg);
 		
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		final group = new ControlsGroup("NOTES", [
+			{label: "Left", action: NOTE_LEFT},
+			{label: "Down", action: NOTE_DOWN},
+			{label: "Up", action: NOTE_UP},
+			{label: "Right", action: NOTE_RIGHT},
+			null,
+		], 0);
+		controlsGroup.add(group);
 		
-		optionShit.push(['']);
-		optionShit.push([defaultKey]);
+		resetGamepadLabel = new Alphabet(0, 80 * group.groupLastIndex, "Reset to Default Buttons", true);
+		resetGamepadLabel.screenCenter(X);
+		add(resetGamepadLabel);
 		
-		for (i in 0...optionShit.length)
+		final group = new ControlsGroup("UI", [
+			{label: "Left", action: UI_LEFT},
+			{label: "Down", action: UI_DOWN},
+			{label: "Up", action: UI_UP},
+			{label: "Right", action: UI_RIGHT},
+			null,
+			{label: "Reset", action: RESET},
+			{label: "Accept", action: ACCEPT},
+			{label: "Back", action: BACK},
+			{label: "Pause", action: PAUSE},
+			null,
+		], group.groupLastIndex);
+		controlsGroup.add(group);
+		
+		final group = new ControlsGroup("VOLUME", [
+			{label: "Mute", action: "volume_mute"},
+			{label: "Up", action: "volume_up"},
+			{label: "Down", action: "volume_down"},
+			null,
+		], group.groupLastIndex);
+		controlsGroup.add(group);
+		
+		final group = new ControlsGroup("DEBUG", [
+			{label: "Key 1", action: "debug_1"},
+			{label: "Key 2", action: "debug_2"},
+			null,
+		], group.groupLastIndex);
+		controlsGroup.add(group);
+		
+		resetKeysLabel = new Alphabet(0, 80 * group.groupLastIndex, "Reset to Default Keys", true);
+		resetKeysLabel.screenCenter(X);
+		add(resetKeysLabel);
+		
+		this.device = device;
+		
+		refreshOptionsList();
+		
+		add(controlsGroup);
+		
+		index = 0;
+		currentBindIndex = 0;
+		for (i in 1...optionsList.length)
 		{
-			var isCentered:Bool = false;
-			var isDefaultKey:Bool = (optionShit[i][0] == defaultKey);
-			if (unselectableCheck(i, true))
+			optionsList[i].index = 0;
+			optionsList[i].index = NONE;
+		}
+		
+		scriptGroup.set('device', device);
+		scriptGroup.set('optionsList', optionsList);
+		scriptGroup.set('controlsGroup', controlsGroup);
+		scriptGroup.set('resetKeysLabel', resetKeysLabel);
+		scriptGroup.set('resetGamepadLabel', resetGamepadLabel);
+		scriptGroup.set('bg', bg);
+		scriptGroup.call('onCreatePost', []);
+	}
+	
+	function refreshOptionsList()
+	{
+		optionsList = [];
+		for (group in controlsGroup)
+		{
+			if (device == Keys || group.label.text == "NOTES")
 			{
-				isCentered = true;
-			}
-			
-			var optionText:Alphabet = new Alphabet(0, (10 * i), optionShit[i][0], (!isCentered || isDefaultKey), false);
-			optionText.isMenuItem = true;
-			if (isCentered)
-			{
-				optionText.screenCenter(X);
-				optionText.forceX = optionText.x;
-				optionText.yAdd = -55;
+				group.visible = true;
+				for (option in group.options)
+				{
+					optionsList.push(option);
+					option.refreshAll(device);
+				}
 			}
 			else
 			{
-				optionText.forceX = 200;
-			}
-			optionText.yMult = 60;
-			optionText.targetY = i;
-			grpOptions.add(optionText);
-			
-			if (!isCentered)
-			{
-				addBindTexts(optionText, i);
-				bindLength++;
-				if (curSelected < 0) curSelected = i;
+				group.visible = false;
 			}
 		}
-		changeSelection();
-		
-		scriptGroup.set('curSelected', curSelected);
-		scriptGroup.set('curAlt', curAlt);
-		scriptGroup.set('defaultKey', defaultKey);
-		scriptGroup.set('bindLength', bindLength);
-		scriptGroup.set('optionShit', optionShit);
-		scriptGroup.set('grpOptions', grpOptions);
-		scriptGroup.set('grpInputs', grpInputs);
-		scriptGroup.set('grpInputsAlt', grpInputsAlt);
-		scriptGroup.set('rebindingKey', rebindingKey);
-		scriptGroup.set('nextAccept', nextAccept);
-		scriptGroup.set('bg', bg);
-		scriptGroup.call('onCreatePost', []);
+		if (index > optionsList.length) index = optionsList.length;
+		scriptGroup.set('optionsList', optionsList);
 	}
 	
 	var leaving:Bool = false;
@@ -124,295 +167,340 @@ class ControlsSubState extends MusicBeatSubstate
 	
 	override function update(elapsed:Float)
 	{
-		if (!rebindingKey)
+		inline function handleIndex()
 		{
-			if (controls.UI_UP_P)
+			if (!(controls.UI_UP_P && controls.UI_DOWN_P) && (controls.UI_UP_P || controls.UI_DOWN_P))
 			{
-				changeSelection(-1);
-			}
-			if (controls.UI_DOWN_P)
-			{
-				changeSelection(1);
-			}
-			if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
-			{
-				changeAlt();
-			}
-			
-			if (controls.BACK)
-			{
-				ClientPrefs.reloadControls();
-				close();
-				FlxG.sound.play(Paths.sound('cancelMenu'));
-			}
-			
-			if (controls.ACCEPT && nextAccept <= 0)
-			{
-				if (optionShit[curSelected][0] == defaultKey)
+				if (controls.UI_UP_P)
 				{
-					ClientPrefs.keyBinds = ClientPrefs.defaultKeys.copy();
-					reloadKeys();
-					changeSelection();
-					FlxG.sound.play(Paths.sound('confirmMenu'));
+					index--;
 				}
-				else if (!unselectableCheck(curSelected))
+				else if (controls.UI_DOWN_P)
 				{
-					bindingTime = 0;
-					rebindingKey = true;
-					if (curAlt)
-					{
-						grpInputsAlt[getInputTextNum()].alpha = 0;
-					}
-					else
-					{
-						grpInputs[getInputTextNum()].alpha = 0;
-					}
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-				}
-			}
-		}
-		else
-		{
-			var keyPressed:Int = FlxG.keys.firstJustPressed();
-			if (keyPressed > -1)
-			{
-				var keysArray:Array<FlxKey> = ClientPrefs.keyBinds.get(optionShit[curSelected][1]);
-				keysArray[curAlt ? 1 : 0] = keyPressed;
-				
-				var opposite:Int = (curAlt ? 0 : 1);
-				if (keysArray[opposite] == keysArray[1 - opposite])
-				{
-					keysArray[opposite] = NONE;
-				}
-				ClientPrefs.keyBinds.set(optionShit[curSelected][1], keysArray);
-				
-				reloadKeys();
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-				rebindingKey = false;
-			}
-			
-			bindingTime += elapsed;
-			if (bindingTime > 5)
-			{
-				if (curAlt)
-				{
-					grpInputsAlt[curSelected].alpha = 1;
-				}
-				else
-				{
-					grpInputs[curSelected].alpha = 1;
+					index++;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
-				rebindingKey = false;
-				bindingTime = 0;
 			}
 		}
-		
-		if (nextAccept > 0)
+		switch state
 		{
-			nextAccept -= 1;
+			case BindState.NONE: // cause controls.ACCEPT is true on the first frame
+				state = SELECT;
+			case SELECT:
+				// check for device changes
+				final key = FlxG.keys.firstJustPressed();
+				final gamepad = FlxG.gamepads.getFirstActiveGamepad();
+				
+				device = switch device
+				{
+					case Keys if (gamepad != null): Gamepad(gamepad.id);
+					case Gamepad(_) if (key > -1): Keys;
+					case Gamepad(id) if (gamepad != null && id != gamepad.id): Gamepad(gamepad.id);
+					case d: d;
+				}
+				
+				handleIndex();
+				if (!(controls.UI_LEFT_P && controls.UI_RIGHT_P) && (controls.UI_LEFT_P || controls.UI_RIGHT_P))
+				{
+					if (controls.UI_LEFT_P) currentBindIndex--;
+					else if (controls.UI_RIGHT_P) currentBindIndex++;
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
+				if (controls.BACK)
+				{
+					ClientPrefs.reloadControls();
+					close();
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+				}
+				
+				if (controls.ACCEPT)
+				{
+					state = REBIND;
+					currentBind.visible = false;
+				}
+				
+			case SELECT_RESET:
+				handleIndex();
+				
+				if (controls.ACCEPT)
+				{
+					switch device
+					{
+						case Keys:
+							ClientPrefs.keyBinds = ClientPrefs.defaultKeys.copy();
+						case Gamepad(_):
+							ClientPrefs.gamepadBinds = ClientPrefs.defaultGamepadBinds.copy();
+					}
+					for (option in optionsList)
+						option.refreshAll(device);
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+				}
+				
+			case REBIND:
+				var inputID:Int = switch device
+				{
+					case Keys: FlxG.keys.firstJustPressed();
+					case Gamepad(id): FlxG.gamepads.getByID(id).firstJustPressedID();
+				}
+				if (inputID > -1)
+				{
+					currentOption.change(device, inputID);
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+					state = SELECT;
+					currentBind.visible = true;
+				}
+				
+				bindingTime += elapsed;
+				if (bindingTime > 5)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					state = SELECT;
+					bindingTime = 0;
+					currentBind.visible = true;
+				}
 		}
+		
 		super.update(elapsed);
-	}
-	
-	function getInputTextNum()
-	{
-		var num:Int = 0;
-		for (i in 0...curSelected)
+		var target:FlxObject = currentOption;
+		if (state == SELECT_RESET)
 		{
-			if (optionShit[i].length > 1)
+			target = switch device
 			{
-				num++;
+				case Keys: resetKeysLabel;
+				case Gamepad(_): resetGamepadLabel;
 			}
 		}
-		return num;
+		camPos.y = FlxMath.lerp(camPos.y, target.y + 25, FlxMath.getElapsedLerp(.16, elapsed));
 	}
 	
-	function changeSelection(change:Int = 0)
+	function set_device(device:Device)
 	{
-		do
+		if (this.device != device)
 		{
-			curSelected += change;
-			if (curSelected < 0) curSelected = optionShit.length - 1;
-			if (curSelected >= optionShit.length) curSelected = 0;
+			this.device = device;
+			resetKeysLabel.visible = device == Keys;
+			resetGamepadLabel.visible = device != Keys;
+			scriptGroup.set('device', device);
+			refreshOptionsList();
 		}
-		while (unselectableCheck(curSelected));
-		
-		var bullShit:Int = 0;
-		
-		for (i in 0...grpInputs.length)
-		{
-			grpInputs[i].alpha = 0.6;
-		}
-		for (i in 0...grpInputsAlt.length)
-		{
-			grpInputsAlt[i].alpha = 0.6;
-		}
-		
-		for (item in grpOptions.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-			
-			if (!unselectableCheck(bullShit - 1))
-			{
-				item.alpha = 0.6;
-				if (item.targetY == 0)
-				{
-					item.alpha = 1;
-					if (curAlt)
-					{
-						for (i in 0...grpInputsAlt.length)
-						{
-							if (grpInputsAlt[i].sprTracker == item)
-							{
-								grpInputsAlt[i].alpha = 1;
-								break;
-							}
-						}
-					}
-					else
-					{
-						for (i in 0...grpInputs.length)
-						{
-							if (grpInputs[i].sprTracker == item)
-							{
-								grpInputs[i].alpha = 1;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		return device;
 	}
 	
-	function changeAlt()
+	function get_currentGroup():ControlsGroup
 	{
-		curAlt = !curAlt;
-		for (i in 0...grpInputs.length)
-		{
-			if (grpInputs[i].sprTracker == grpOptions.members[curSelected])
-			{
-				grpInputs[i].alpha = 0.6;
-				if (!curAlt)
-				{
-					grpInputs[i].alpha = 1;
-				}
-				break;
-			}
-		}
-		for (i in 0...grpInputsAlt.length)
-		{
-			if (grpInputsAlt[i].sprTracker == grpOptions.members[curSelected])
-			{
-				grpInputsAlt[i].alpha = 0.6;
-				if (curAlt)
-				{
-					grpInputsAlt[i].alpha = 1;
-				}
-				break;
-			}
-		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		if (state == SELECT_RESET) return null;
+		return cast currentOption.container.container;
 	}
 	
-	private function unselectableCheck(num:Int, ?checkDefaultKey:Bool = false):Bool
+	function set_currentGroup(currentGroup:ControlsGroup):ControlsGroup
 	{
-		if (optionShit[num][0] == defaultKey)
+		if (currentGroup == null)
 		{
-			return checkDefaultKey;
+			index = 0;
+			return controlsGroup.members[0];
 		}
-		return optionShit[num].length < 2 && optionShit[num][0] != defaultKey;
+		index = optionsList.indexOf(currentGroup.options.members[0]);
+		return get_currentGroup();
 	}
 	
-	private function addBindTexts(optionText:Alphabet, num:Int)
+	function get_currentOption():ControlsOption
 	{
-		var keys:Array<Dynamic> = ClientPrefs.keyBinds.get(optionShit[num][1]);
-		var text1 = new AttachedAlphabet(InputFormatter.getKeyName(keys[0]), 400, -55);
-		text1.setPosition(optionText.x + 400, optionText.y - 55);
-		text1.sprTracker = optionText;
-		grpInputs.push(text1);
-		add(text1);
-		
-		var text2 = new AttachedAlphabet(InputFormatter.getKeyName(keys[1]), 650, -55);
-		text2.setPosition(optionText.x + 650, optionText.y - 55);
-		text2.sprTracker = optionText;
-		grpInputsAlt.push(text2);
-		add(text2);
+		return optionsList[index];
 	}
 	
-	function reloadKeys()
+	function set_currentOption(currentOption:ControlsOption):ControlsOption
 	{
-		while (grpInputs.length > 0)
-		{
-			var item:AttachedAlphabet = grpInputs[0];
-			item.kill();
-			grpInputs.remove(item);
-			item.destroy();
-		}
-		while (grpInputsAlt.length > 0)
-		{
-			var item:AttachedAlphabet = grpInputsAlt[0];
-			item.kill();
-			grpInputsAlt.remove(item);
-			item.destroy();
-		}
+		index = optionsList.indexOf(currentOption);
+		return currentOption;
+	}
+	
+	function set_index(index:Int):Int
+	{
+		index = FlxMath.wrap(index, 0, optionsList.length);
+		if (state != BindState.NONE) state = (index == optionsList.length) ? SELECT_RESET : SELECT;
 		
-		trace('Reloaded keys: ' + ClientPrefs.keyBinds);
-		
-		for (i in 0...grpOptions.length)
+		if (this.index != index)
 		{
-			if (!unselectableCheck(i, true))
+			if (optionsList[this.index] != null && state == SELECT)
 			{
-				addBindTexts(grpOptions.members[i], i);
+				final bindIndex = currentBindIndex;
+				optionsList[index].index = bindIndex;
 			}
-		}
-		
-		var bullShit:Int = 0;
-		for (i in 0...grpInputs.length)
-		{
-			grpInputs[i].alpha = 0.6;
-		}
-		for (i in 0...grpInputsAlt.length)
-		{
-			grpInputsAlt[i].alpha = 0.6;
-		}
-		
-		for (item in grpOptions.members)
-		{
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-			
-			if (!unselectableCheck(bullShit - 1))
+			this.index = index;
+			for (i => option in optionsList)
 			{
-				item.alpha = 0.6;
-				if (item.targetY == 0)
-				{
-					item.alpha = 1;
-					if (curAlt)
-					{
-						for (i in 0...grpInputsAlt.length)
-						{
-							if (grpInputsAlt[i].sprTracker == item)
-							{
-								grpInputsAlt[i].alpha = 1;
-							}
-						}
-					}
-					else
-					{
-						for (i in 0...grpInputs.length)
-						{
-							if (grpInputs[i].sprTracker == item)
-							{
-								grpInputs[i].alpha = 1;
-							}
-						}
-					}
-				}
+				if (i != index) option.index = NONE;
+				option.label.alpha = (i == index) ? 1.0 : 0.6;
 			}
+			for (group in controlsGroup)
+				group.label.alpha = (currentGroup == group) ? 1.0 : 0.6;
+				
+			if (currentBindIndex == NONE) currentBindIndex = 0;
+		}
+		return index;
+	}
+	
+	function get_currentBind():Alphabet
+	{
+		if (state == SELECT_RESET) return null;
+		return currentOption.binds.members[currentBindIndex];
+	}
+	
+	function set_currentBind(currentBind:Alphabet):Alphabet
+	{
+		if (state == SELECT_RESET) return null;
+		final index = currentOption.binds.members.indexOf(currentBind);
+		if (index != -1) currentBindIndex = index;
+		return currentBind;
+	}
+	
+	function get_currentBindIndex():Int
+	{
+		if (state == SELECT_RESET) return NONE;
+		return currentOption.index;
+	}
+	
+	function set_currentBindIndex(currentBindIndex:Int):Int
+	{
+		if (state == SELECT_RESET) return NONE;
+		return currentOption.index = currentBindIndex;
+	}
+	
+	override function destroy()
+	{
+		FlxG.cameras.remove(camera);
+		super.destroy();
+	}
+}
+
+class ControlsGroup extends FlxContainer
+{
+	public var label:Alphabet;
+	
+	public var options = new FlxTypedContainer<ControlsOption>();
+	
+	public var groupLastIndex:Int;
+	
+	public function new(label:String, options:Array<{label:String, action:Action}>, groupIndex:Int)
+	{
+		super();
+		
+		this.label = new Alphabet(0, (80 * groupIndex++) - 55, label);
+		this.label.screenCenter(X);
+		add(this.label);
+		
+		for (option in options)
+		{
+			if (option != null) this.options.add(new ControlsOption(200, (80 * groupIndex), option.label, option.action));
+			groupIndex++;
+		}
+		add(this.options);
+		groupLastIndex = groupIndex;
+	}
+}
+
+class ControlsOption extends FlxSpriteContainer
+{
+	public var label:Alphabet;
+	
+	public var action:Action;
+	
+	public var binds:FlxTypedSpriteContainer<Alphabet>;
+	
+	public var index(default, set):Int = -1;
+	
+	public function new(x = .0, y = .0, label:String, action:Action)
+	{
+		super(x, y);
+		this.label = new Alphabet(0, 0, label, true);
+		add(this.label);
+		
+		binds = new FlxTypedSpriteContainer<Alphabet>(400, -55);
+		add(binds);
+		
+		this.action = action;
+		
+		index = 0;
+		index = ControlsSubState.NONE;
+	}
+	
+	public function refreshAll(device:Device)
+	{
+		final binds:Array<Int> = getBinds(device);
+		for (i => _ in binds)
+		{
+			if (this.binds.members[i] == null) this.binds.add(new Alphabet(250 * i, 0));
+			refreshBind(device, i);
+		}
+		// wouldn't happen normally but just incase someone edits binds to be three or more fun guys
+		if (binds.length < this.binds.length)
+		{
+			for (i in binds.length...this.binds.length)
+				this.binds.members[i].visible = false;
 		}
 	}
+	
+	function refreshBind(device:Device, index:Int)
+	{
+		final inputID:Int = getBinds(device)[index];
+		final alpha = binds.members[index].alpha;
+		binds.members[index].alpha = 1.0;
+		binds.members[index].changeText(switch device
+		{
+			case Keys: InputFormatter.getKeyName(inputID);
+			case Gamepad(id): FlxG.gamepads.getByID(id).getInputLabel(inputID).toUpperCase();
+		});
+		binds.members[index].alpha = alpha;
+	}
+	
+	/**
+	 * Changes the current selected option index to the bind
+	 * @param device 
+	 * @param inputID 
+	 */
+	public function change(device:Device, inputID:Int)
+	{
+		final binds:Array<Int> = getBinds(device);
+		final altIndex = binds.indexOf(inputID);
+		if (altIndex != -1) binds[altIndex] = binds[index];
+		binds[index] = inputID;
+		refreshBind(device, index);
+	}
+	
+	function set_index(index:Int):Int
+	{
+		if (index != ControlsSubState.NONE)
+		{
+			var len = binds.length - 1;
+			while (len > 0 && !binds.members[len].visible)
+				len--;
+			index = FlxMath.wrap(index, 0, len);
+		}
+		
+		if (this.index != index)
+		{
+			for (i => bind in binds.members)
+				bind.alpha = (i == index) ? 1.0 : 0.6;
+			this.index = index;
+		}
+		
+		return index;
+	}
+	
+	inline function getBinds(device:Device):Array<Int>
+	{
+		return switch device
+		{
+			case Keys: ClientPrefs.keyBinds.get(action);
+			case Gamepad(_): ClientPrefs.gamepadBinds.get(action);
+		}
+	}
+}
+
+enum BindState
+{
+	NONE;
+	SELECT;
+	SELECT_RESET;
+	REBIND;
 }

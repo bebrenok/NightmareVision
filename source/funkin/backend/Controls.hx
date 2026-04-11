@@ -573,6 +573,7 @@ class Controls extends FlxActionSet
 	
 	public function addDefaultGamepad(id):Void
 	{
+		var binds = ClientPrefs.gamepadBinds;
 		addGamepadLiteral(id, [
 			Control.ACCEPT => [FlxGamepadInputID.ACCEPT],
 			Control.BACK => [CANCEL],
@@ -580,10 +581,10 @@ class Controls extends FlxActionSet
 			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
 			Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
 			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
-			Control.NOTE_UP => [DPAD_UP, Y],
-			Control.NOTE_DOWN => [DPAD_DOWN, A],
-			Control.NOTE_LEFT => [DPAD_LEFT, X],
-			Control.NOTE_RIGHT => [DPAD_RIGHT, B],
+			Control.NOTE_UP => binds.get(Action.NOTE_UP),
+			Control.NOTE_DOWN => binds.get(Action.NOTE_DOWN),
+			Control.NOTE_LEFT => binds.get(Action.NOTE_LEFT),
+			Control.NOTE_RIGHT => binds.get(Action.NOTE_RIGHT),
 			Control.PAUSE => [START],
 			Control.RESET => [8]
 		]);
