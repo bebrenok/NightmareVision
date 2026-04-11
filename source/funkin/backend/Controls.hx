@@ -6,6 +6,7 @@ import flixel.input.actions.FlxAction;
 import flixel.input.actions.FlxActionInput;
 import flixel.input.actions.FlxActionManager;
 import flixel.input.actions.FlxActionSet;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
 
@@ -94,8 +95,23 @@ class Controls extends FlxActionSet
 	public static function init()
 	{
 		instance = new Controls('player', Solo);
-		if (FlxG.gamepads.getByID(0) != null) instance.addDefaultGamepad(0);
+        for (id in 0...FlxG.gamepads.numActiveGamepads)
+        {
+            if (FlxG.gamepads.getByID(id) != null) instance.addDefaultGamepad(id);
+        }
+        FlxG.gamepads.deviceConnected.add(gamepadConnected);
+        FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
 	}
+
+    static function gamepadConnected(gamepad:FlxGamepad)
+    {
+        instance.addDefaultGamepad(gamepad.id);
+    }
+
+    static function gamepadDisconnected(gamepad:FlxGamepad)
+    {
+        instance.removeGamepad(gamepad.id);
+    }
 	
 	var _ui_up = new FlxActionDigital(Action.UI_UP);
 	var _ui_left = new FlxActionDigital(Action.UI_LEFT);
@@ -558,16 +574,16 @@ class Controls extends FlxActionSet
 	public function addDefaultGamepad(id):Void
 	{
 		addGamepadLiteral(id, [
-			Control.ACCEPT => [A],
-			Control.BACK => [B],
+			Control.ACCEPT => [FlxGamepadInputID.ACCEPT],
+			Control.BACK => [CANCEL],
 			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
 			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
 			Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
 			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
-			Control.NOTE_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP, RIGHT_STICK_DIGITAL_UP, Y],
-			Control.NOTE_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN, RIGHT_STICK_DIGITAL_DOWN, A],
-			Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT, RIGHT_STICK_DIGITAL_LEFT, X],
-			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT, RIGHT_STICK_DIGITAL_RIGHT, B],
+			Control.NOTE_UP => [DPAD_UP, Y],
+			Control.NOTE_DOWN => [DPAD_DOWN, A],
+			Control.NOTE_LEFT => [DPAD_LEFT, X],
+			Control.NOTE_RIGHT => [DPAD_RIGHT, B],
 			Control.PAUSE => [START],
 			Control.RESET => [8]
 		]);
