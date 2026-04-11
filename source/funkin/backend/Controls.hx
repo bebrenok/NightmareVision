@@ -131,7 +131,7 @@ class Controls extends FlxActionSet
 	var _pause = new FlxActionDigital(Action.PAUSE);
 	var _reset = new FlxActionDigital(Action.RESET);
 	
-	var byName:Map<String, FlxActionDigital> = [];
+	public var actions:Map<Action, FlxActionDigital> = new Map<Action, FlxActionDigital>();
 	
 	public var gamepadsAdded:Array<Int> = [];
 	public var keyboardScheme = KeyboardScheme.None;
@@ -294,7 +294,7 @@ class Controls extends FlxActionSet
 		add(_reset);
 		
 		for (action in digitalActions)
-			byName[action.name] = action;
+			actions[action.name] = action;
 			
 		setKeyboardScheme(scheme, false);
 	}
@@ -373,11 +373,11 @@ class Controls extends FlxActionSet
 	
 	public function copyFrom(controls:Controls, ?device:Device)
 	{
-		for (name => action in controls.byName)
+		for (name => action in controls.actions)
 		{
 			for (input in action.inputs)
 			{
-				if (device == null || isDevice(input, device)) byName[name].add(cast input);
+				if (device == null || isDevice(input, device)) actions[name].add(cast input);
 			}
 		}
 		
