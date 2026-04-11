@@ -66,8 +66,6 @@ class ClientPrefs
 	// gameplay ------------------------------------------------------------------------//
 	@saveVar public static var guitarHeroSustains:Bool = true;
 	
-	@saveVar public static var controllerMode:Bool = false;
-	
 	@saveVar public static var mechanics:Bool = true;
 	
 	@saveVar public static var modcharts:Bool = true;

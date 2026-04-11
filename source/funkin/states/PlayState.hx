@@ -848,8 +848,6 @@ class PlayState extends MusicBeatState
 		
 		input = new InputSystem(onKeyPress, onKeyRelease, keysArray);
 		
-		if (!ClientPrefs.controllerMode) {}
-		
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000;
 		
 		scripts.call('onCreatePost', []);
@@ -2721,7 +2719,7 @@ class PlayState extends MusicBeatState
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = input.getKeyFromEvent(eventKey);
 		
-		if (key <= -1 || (!FlxG.keys.checkStatus(eventKey, JUST_PRESSED) && !ClientPrefs.controllerMode)) return;
+		if (key <= -1 || !FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) return;
 		
 		var prevTime:Float = Conductor.songPosition;
 		if (audio.inst?.playing) Conductor.songPosition = @:privateAccess audio.inst._channel.position;

@@ -19,11 +19,8 @@ class InputSystem implements flixel.util.IFlxDestroyable
 	{
 		_pressCallback = press;
 		_releaseCallback = release;
-		if (!ClientPrefs.controllerMode)
-		{
-			FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, press);
-			FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, release);
-		}
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, press);
+		FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, release);
 		controls = Controls.instance;
 		
 		this.keys = keys;
@@ -31,16 +28,13 @@ class InputSystem implements flixel.util.IFlxDestroyable
 	
 	public function destroy():Void
 	{
-		if (!ClientPrefs.controllerMode)
-		{
-			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, _pressCallback);
-			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, _releaseCallback);
-		}
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, _pressCallback);
+		FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, _releaseCallback);
 	}
 	
 	public function update(elapsed:Float = 0.0):Void
 	{
-		if (_pressCallback == null || _releaseCallback == null || !ClientPrefs.controllerMode) return;
+		if (_pressCallback == null || _releaseCallback == null) return;
 		
 		// controlEventStuff('keyDown', [controls.NOTE_LEFT, controls.NOTE_DOWN, controls.NOTE_UP, controls.NOTE_RIGHT]);
 		controlEventStuff('keyDown', [controls.NOTE_LEFT_P, controls.NOTE_DOWN_P, controls.NOTE_UP_P, controls.NOTE_RIGHT_P]);
