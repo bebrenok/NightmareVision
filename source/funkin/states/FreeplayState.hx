@@ -331,6 +331,13 @@ class FreeplayState extends MusicBeatState
 			return;
 		}
 		
+		if (FlxG.keys.justPressed.SEVEN)
+		{
+			persistentUpdate = false;
+			openSubState(new funkin.states.editors.SongMetaEditor(songs[curSelected].songName));
+			return;
+		}
+		
 		if (controls.UI_LEFT_P) changeDiff(-1);
 		else if (controls.UI_RIGHT_P) changeDiff(1);
 		else if (controls.UI_UP_P || controls.UI_DOWN_P) changeDiff();
