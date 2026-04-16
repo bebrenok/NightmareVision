@@ -24,7 +24,7 @@ jobs: # FUCK MY LIFE BROOOOO
         runs-on: windows-latest
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6.0.2
             - uses: krdlab/setup-haxe@master
 
               with: 
@@ -36,15 +36,15 @@ jobs: # FUCK MY LIFE BROOOOO
                 haxelib install hxcpp > nul --quiet
                 haxelib install hxpkg --quiet
                 haxelib run hxpkg install
-            - name: Reinstall / Fix Lime
+            - name: Installing a newer lime branch
               run: |
                 haxelib remove lime
-                haxelib git lime https://github.com/FunkinCrew/lime
+                haxelib git lime https://github.com/FunkinCrew/lime ee20b5ab4eb01a5e6037c72aa8c840f5c32825cb
                 haxelib run lime rebuild cpp 
             - name: Compile build
               run: haxelib run lime build windows -D ${{inputs.buildFlags}}
             - name: Publish artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7.0.0
               with:
                 name: NightmareVision (Windows)
                 path: export/release/windows/bin
@@ -53,7 +53,7 @@ jobs: # FUCK MY LIFE BROOOOO
         runs-on: ubuntu-22.04
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6.0.2
             - uses: krdlab/setup-haxe@master
 
               with:
@@ -71,7 +71,7 @@ jobs: # FUCK MY LIFE BROOOOO
             - name: Compile build
               run: haxelib run lime build Project.xml linux -D ${{inputs.buildFlags}}
             - name: Publish artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7.0.0
               with:
                 name: NightmareVision (Linux)
                 path: 'export/release/linux/bin'
