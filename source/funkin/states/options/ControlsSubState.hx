@@ -21,9 +21,7 @@ import funkin.backend.MusicBeatSubstate;
 
 class ControlsSubState extends MusicBeatSubstate
 {
-	public static inline var NONE:Int = -2;
-	
-	private static var defaultKey:String = 'Reset to Default Keys';
+	public static inline final NONE:Int = -2;
 	
 	public var device(default, set):Device;
 	
@@ -182,7 +180,8 @@ class ControlsSubState extends MusicBeatSubstate
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
 		}
-		switch state
+		
+		switch (state)
 		{
 			case BindState.NONE: // cause controls.ACCEPT is true on the first frame
 				state = SELECT;
@@ -191,7 +190,7 @@ class ControlsSubState extends MusicBeatSubstate
 				final key = FlxG.keys.firstJustPressed();
 				final gamepad = FlxG.gamepads.getFirstActiveGamepad();
 				
-				device = switch device
+				device = switch (device)
 				{
 					case Keys if (gamepad != null): Gamepad(gamepad.id);
 					case Gamepad(_) if (key > -1): Keys;
@@ -236,6 +235,13 @@ class ControlsSubState extends MusicBeatSubstate
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 				}
 				
+				if (controls.BACK)
+				{
+					ClientPrefs.reloadControls();
+					close();
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+				}
+				
 			case REBIND:
 				var inputID:Int = switch device
 				{
@@ -264,16 +270,16 @@ class ControlsSubState extends MusicBeatSubstate
 		var target:FlxObject = currentOption;
 		if (state == SELECT_RESET)
 		{
-			target = switch device
+			target = switch (device)
 			{
 				case Keys: resetKeysLabel;
 				case Gamepad(_): resetGamepadLabel;
 			}
 		}
-		camPos.y = FlxMath.lerp(camPos.y, target.y + 25, FlxMath.getElapsedLerp(.16, elapsed));
+		camPos.y = FlxMath.lerp(camPos.y, target.y + 25, FlxMath.getElapsedLerp(0.16, elapsed));
 	}
 	
-	function set_device(device:Device)
+	function set_device(device:Device):Device
 	{
 		if (this.device != device)
 		{
@@ -286,7 +292,7 @@ class ControlsSubState extends MusicBeatSubstate
 		return device;
 	}
 	
-	function get_currentGroup():ControlsGroup
+	function get_currentGroup():Null<ControlsGroup>
 	{
 		if (state == SELECT_RESET) return null;
 		return cast currentOption.container.container;
@@ -340,13 +346,13 @@ class ControlsSubState extends MusicBeatSubstate
 		return index;
 	}
 	
-	function get_currentBind():Alphabet
+	function get_currentBind():Null<Alphabet>
 	{
 		if (state == SELECT_RESET) return null;
 		return currentOption.binds.members[currentBindIndex];
 	}
 	
-	function set_currentBind(currentBind:Alphabet):Alphabet
+	function set_currentBind(currentBind:Alphabet):Null<Alphabet>
 	{
 		if (state == SELECT_RESET) return null;
 		final index = currentOption.binds.members.indexOf(currentBind);
@@ -497,10 +503,10 @@ class ControlsOption extends FlxSpriteContainer
 	}
 }
 
-enum BindState
+enum abstract BindState(Int)
 {
-	NONE;
-	SELECT;
-	SELECT_RESET;
-	REBIND;
+	var NONE;
+	var SELECT;
+	var SELECT_RESET;
+	var REBIND;
 }
