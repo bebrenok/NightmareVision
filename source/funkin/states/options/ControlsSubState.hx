@@ -480,6 +480,8 @@ class ControlsOption extends FlxSpriteContainer
 			var len = binds.length - 1;
 			while (len > 0 && !binds.members[len].visible)
 				len--;
+			if (len < 0) len = 0;
+			
 			index = FlxMath.wrap(index, 0, len);
 		}
 		
