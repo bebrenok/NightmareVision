@@ -44,8 +44,8 @@ import funkin.states.editors.*;
 import funkin.game.modchart.*;
 import funkin.game.StoryMeta;
 import funkin.game.Countdown;
-import funkin.backend.InputSystem;
-import funkin.backend.InputEvent;
+import funkin.input.InputSystem;
+import funkin.input.InputEvent;
 import funkin.audio.SyncedFlxSoundGroup;
 #if VIDEOS_ALLOWED
 import funkin.video.FunkinVideoSprite;
@@ -832,8 +832,8 @@ class PlayState extends MusicBeatState
 		resetDiscordRPC();
 		
 		input = new InputSystem(controls);
-        input.addEventListener(InputEvent.INPUT_PRESSED, onInputPress);
-        input.addEventListener(InputEvent.INPUT_RELEASED, onInputRelease);
+		input.addEventListener(InputEvent.INPUT_PRESSED, onInputPress);
+		input.addEventListener(InputEvent.INPUT_RELEASED, onInputRelease);
 		
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000;
 		
@@ -2687,13 +2687,13 @@ class PlayState extends MusicBeatState
 	function onInputPress(event:InputEvent):Void
 	{
 		if (cpuControlled || paused || !startedCountdown) return;
-
+		
 		var key:Int = event.noteData;
-
+		
 		var prevTime:Float = Conductor.songPosition;
 		if (audio.inst?.playing) Conductor.songPosition = @:privateAccess audio.inst._channel.position;
-        // subtract latency
-        Conductor.songPosition -= lime.system.System.getTimer() - event.timer;
+		// subtract latency
+		Conductor.songPosition -= lime.system.System.getTimer() - event.timer;
 		
 		if (generatedMusic && !endingSong)
 		{

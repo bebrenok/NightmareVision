@@ -3,11 +3,11 @@ package funkin.states.options;
 import flixel.FlxObject;
 import flixel.group.FlxSpriteContainer;
 
-import funkin.backend.Controls.Action;
+import funkin.input.Controls.Action;
 
 import flixel.group.FlxContainer;
 
-import funkin.backend.Controls.Device;
+import funkin.input.Controls.Device;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
@@ -16,7 +16,7 @@ import flixel.input.keyboard.FlxKey;
 
 import funkin.objects.*;
 import funkin.states.substates.*;
-import funkin.backend.InputFormatter;
+import funkin.input.InputFormatter;
 import funkin.backend.MusicBeatSubstate;
 
 class ControlsSubState extends MusicBeatSubstate

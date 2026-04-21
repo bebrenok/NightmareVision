@@ -1,4 +1,4 @@
-package funkin.backend;
+package funkin.input;
 
 import flixel.FlxG;
 import flixel.input.FlxInput;
@@ -95,23 +95,23 @@ class Controls extends FlxActionSet
 	public static function init()
 	{
 		instance = new Controls('player', Solo);
-        for (id in 0...FlxG.gamepads.numActiveGamepads)
-        {
-            if (FlxG.gamepads.getByID(id) != null) instance.addDefaultGamepad(id);
-        }
-        FlxG.gamepads.deviceConnected.add(gamepadConnected);
-        FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
+		for (id in 0...FlxG.gamepads.numActiveGamepads)
+		{
+			if (FlxG.gamepads.getByID(id) != null) instance.addDefaultGamepad(id);
+		}
+		FlxG.gamepads.deviceConnected.add(gamepadConnected);
+		FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
 	}
-
-    static function gamepadConnected(gamepad:FlxGamepad)
-    {
-        instance.addDefaultGamepad(gamepad.id);
-    }
-
-    static function gamepadDisconnected(gamepad:FlxGamepad)
-    {
-        instance.removeGamepad(gamepad.id);
-    }
+	
+	static function gamepadConnected(gamepad:FlxGamepad)
+	{
+		instance.addDefaultGamepad(gamepad.id);
+	}
+	
+	static function gamepadDisconnected(gamepad:FlxGamepad)
+	{
+		instance.removeGamepad(gamepad.id);
+	}
 	
 	var _ui_up = new FlxActionDigital(Action.UI_UP);
 	var _ui_left = new FlxActionDigital(Action.UI_LEFT);

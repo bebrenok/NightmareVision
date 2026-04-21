@@ -1,13 +1,14 @@
 package funkin.data;
 
 import flixel.input.gamepad.FlxGamepadInputID;
+
 import funkin.backend.DebugDisplay;
 
 import flixel.input.keyboard.FlxKey;
 import flixel.util.FlxSave;
 
-import funkin.backend.Controls.KeyboardScheme;
-import funkin.backend.Controls;
+import funkin.input.Controls.KeyboardScheme;
+import funkin.input.Controls;
 
 /**
  * to add new save options, make a static var with the `@saveVar` meta and itll be handled on its own
@@ -201,20 +202,20 @@ class ClientPrefs
 	];
 	
 	public static var defaultKeys:Map<Action, Array<FlxKey>> = null;
-
-    public static var gamepadBinds:Map<Action, Array<FlxGamepadInputID>> = [
-        'note_up' => [DPAD_UP, Y],
-        'note_down' => [DPAD_DOWN, A],
-        'note_left' => [DPAD_LEFT, X],
-        'note_right' => [DPAD_RIGHT, B],
-    ];
-
-    public static var defaultGamepadBinds:Map<Action, Array<FlxGamepadInputID>> = null;
+	
+	public static var gamepadBinds:Map<Action, Array<FlxGamepadInputID>> = [
+		'note_up' => [DPAD_UP, Y],
+		'note_down' => [DPAD_DOWN, A],
+		'note_left' => [DPAD_LEFT, X],
+		'note_right' => [DPAD_RIGHT, B],
+	];
+	
+	public static var defaultGamepadBinds:Map<Action, Array<FlxGamepadInputID>> = null;
 	
 	public static function loadDefaultKeys()
 	{
 		defaultKeys = keyBinds.copy();
-        defaultGamepadBinds = gamepadBinds.copy();
+		defaultGamepadBinds = gamepadBinds.copy();
 	}
 	
 	// Editor Colours ------------------------------------------------------------------------//
@@ -305,10 +306,8 @@ class ClientPrefs
 		
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2');
-		if (save != null && save.data.customControls != null)
-			CoolUtil.copyMapValues(save.data.customControls, keyBinds);
-		if (save != null && save.data.customGamepadControls != null)
-			CoolUtil.copyMapValues(save.data.customGamepadControls, gamepadBinds);
+		if (save != null && save.data.customControls != null) CoolUtil.copyMapValues(save.data.customControls, keyBinds);
+		if (save != null && save.data.customGamepadControls != null) CoolUtil.copyMapValues(save.data.customGamepadControls, gamepadBinds);
 		reloadControls();
 		
 		save = FlxDestroyUtil.destroy(save);
@@ -338,11 +337,11 @@ class ClientPrefs
 	public static function reloadControls()
 	{
 		Controls.instance.setKeyboardScheme(KeyboardScheme.Solo);
-        final gamepads = Controls.instance.gamepadsAdded.copy();
-        Controls.instance.removeGamepad();
-        for (id in gamepads)
-            Controls.instance.addDefaultGamepad(id);
-		
+		final gamepads = Controls.instance.gamepadsAdded.copy();
+		Controls.instance.removeGamepad();
+		for (id in gamepads)
+			Controls.instance.addDefaultGamepad(id);
+			
 		ClientPrefs.muteKeys = copyKey(keyBinds.get('volume_mute'));
 		ClientPrefs.volumeDownKeys = copyKey(keyBinds.get('volume_down'));
 		ClientPrefs.volumeUpKeys = copyKey(keyBinds.get('volume_up'));

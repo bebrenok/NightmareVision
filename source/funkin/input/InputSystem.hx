@@ -1,4 +1,8 @@
-package funkin.backend;
+package funkin.input;
+
+import openfl.events.KeyboardEvent;
+import openfl.events.EventType;
+import openfl.events.EventDispatcher;
 
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.gamepad.FlxGamepad;
@@ -6,13 +10,8 @@ import flixel.input.FlxInput.FlxInputState;
 import flixel.input.actions.FlxActionInput;
 import flixel.input.actions.FlxAction.FlxActionDigital;
 
-import openfl.events.EventType;
-import openfl.events.EventDispatcher;
-
-import funkin.backend.Controls;
-import funkin.backend.Controls.Action;
-
-import openfl.events.KeyboardEvent;
+import funkin.input.Controls;
+import funkin.input.Controls.Action;
 
 import lime.system.System;
 #if FLX_GAMEINPUT_API
@@ -43,7 +42,7 @@ typedef AxisEvent<T> = (id:T, value:Float) -> Void;
  * ```
  */
 @:nullSafety
-class InputSystem implements flixel.util.IFlxDestroyable extends EventDispatcher
+class InputSystem extends EventDispatcher implements flixel.util.IFlxDestroyable
 {
 	/**
 	 * The list of actions checked for, in order of their note direction
@@ -53,7 +52,7 @@ class InputSystem implements flixel.util.IFlxDestroyable extends EventDispatcher
 	/**
 	 * The current controls instance used for this input system
 	 */
-	public var controls:funkin.backend.Controls;
+	public var controls:funkin.input.Controls;
 	
 	// the actions themselves
 	public var pressedActions:Array<FlxActionDigital> = [];
