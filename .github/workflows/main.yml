@@ -36,11 +36,7 @@ jobs: # FUCK MY LIFE BROOOOO
                 haxelib install hxcpp > nul --quiet
                 haxelib install hxpkg --quiet
                 haxelib run hxpkg install
-            - name: Installing a newer lime branch
-              run: |
-                haxelib remove lime
-                haxelib git lime https://github.com/FunkinCrew/lime ee20b5ab4eb01a5e6037c72aa8c840f5c32825cb
-                haxelib run lime rebuild cpp 
+                haxelib run lime rebuild cpp
             - name: Compile build
               run: haxelib run lime build windows -D ${{inputs.buildFlags}}
             - name: Publish artifact
