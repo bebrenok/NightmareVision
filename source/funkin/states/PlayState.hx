@@ -52,9 +52,6 @@ import funkin.video.FunkinVideoSprite;
 
 class PlayState extends MusicBeatState
 {
-	public static var STRUM_X:Float = 42; // redundant
-	public static var STRUM_X_MIDDLESCROLL:Float = -278; // redundant
-	
 	public static var meta:Null<SongMetaData> = null; // bad?
 	
 	public static var SONG:Null<Song> = null;
@@ -62,9 +59,6 @@ class PlayState extends MusicBeatState
 	public static var storyMeta:StoryMeta = new StoryMeta();
 	
 	public static var isStoryMode:Bool = false;
-	
-	// how big to stretch the pixel art assets
-	public static var daPixelZoom:Float = 6;
 	
 	/**
 	 * Static reference to the state. used for other classes to reference
