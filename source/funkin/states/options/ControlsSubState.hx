@@ -151,10 +151,7 @@ class ControlsSubState extends MusicBeatSubstate
 					option.refreshAll(device);
 				}
 			}
-			else
-			{
-				group.visible = false;
-			}
+			else group.visible = false;
 		}
 		if (index > optionsList.length) index = optionsList.length;
 		scriptGroup.set('optionsList', optionsList);
@@ -169,14 +166,9 @@ class ControlsSubState extends MusicBeatSubstate
 		{
 			if (!(controls.UI_UP_P && controls.UI_DOWN_P) && (controls.UI_UP_P || controls.UI_DOWN_P))
 			{
-				if (controls.UI_UP_P)
-				{
-					index--;
-				}
-				else if (controls.UI_DOWN_P)
-				{
-					index++;
-				}
+				if (controls.UI_UP_P) index--;
+				else if (controls.UI_DOWN_P) index++;
+				
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
 		}
@@ -185,6 +177,7 @@ class ControlsSubState extends MusicBeatSubstate
 		{
 			case BindState.NONE: // cause controls.ACCEPT is true on the first frame
 				state = SELECT;
+				
 			case SELECT:
 				// check for device changes
 				final key = FlxG.keys.firstJustPressed();
@@ -199,12 +192,14 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 				
 				handleIndex();
+				
 				if (!(controls.UI_LEFT_P && controls.UI_RIGHT_P) && (controls.UI_LEFT_P || controls.UI_RIGHT_P))
 				{
 					if (controls.UI_LEFT_P) currentBindIndex--;
 					else if (controls.UI_RIGHT_P) currentBindIndex++;
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 				}
+				
 				if (controls.BACK)
 				{
 					ClientPrefs.reloadControls();
@@ -257,6 +252,7 @@ class ControlsSubState extends MusicBeatSubstate
 				}
 				
 				bindingTime += elapsed;
+				
 				if (bindingTime > 5)
 				{
 					FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -267,6 +263,7 @@ class ControlsSubState extends MusicBeatSubstate
 		}
 		
 		super.update(elapsed);
+		
 		var target:FlxObject = currentOption;
 		if (state == SELECT_RESET)
 		{
@@ -276,6 +273,7 @@ class ControlsSubState extends MusicBeatSubstate
 				case Gamepad(_): resetGamepadLabel;
 			}
 		}
+		
 		camPos.y = FlxMath.lerp(camPos.y, target.y + 25, FlxMath.getElapsedLerp(0.16, elapsed));
 	}
 	
@@ -289,6 +287,7 @@ class ControlsSubState extends MusicBeatSubstate
 			scriptGroup.set('device', device);
 			refreshOptionsList();
 		}
+		
 		return device;
 	}
 	
@@ -306,6 +305,7 @@ class ControlsSubState extends MusicBeatSubstate
 			return controlsGroup.members[0];
 		}
 		index = optionsList.indexOf(currentGroup.options.members[0]);
+		
 		return get_currentGroup();
 	}
 	
@@ -332,12 +332,15 @@ class ControlsSubState extends MusicBeatSubstate
 				final bindIndex = currentBindIndex;
 				optionsList[index].index = bindIndex;
 			}
+			
 			this.index = index;
+			
 			for (i => option in optionsList)
 			{
 				if (i != index) option.index = NONE;
 				option.label.alpha = (i == index) ? 1.0 : 0.6;
 			}
+			
 			for (group in controlsGroup)
 				group.label.alpha = (currentGroup == group) ? 1.0 : 0.6;
 				
@@ -355,8 +358,10 @@ class ControlsSubState extends MusicBeatSubstate
 	function set_currentBind(currentBind:Alphabet):Null<Alphabet>
 	{
 		if (state == SELECT_RESET) return null;
+		
 		final index = currentOption.binds.members.indexOf(currentBind);
 		if (index != -1) currentBindIndex = index;
+		
 		return currentBind;
 	}
 	
@@ -401,6 +406,7 @@ class ControlsGroup extends FlxContainer
 			groupIndex++;
 		}
 		add(this.options);
+		
 		groupLastIndex = groupIndex;
 	}
 }
@@ -433,11 +439,13 @@ class ControlsOption extends FlxSpriteContainer
 	public function refreshAll(device:Device)
 	{
 		final binds:Array<Int> = getBinds(device);
+		
 		for (i => _ in binds)
 		{
 			if (this.binds.members[i] == null) this.binds.add(new Alphabet(250 * i, 0));
 			refreshBind(device, i);
 		}
+		
 		// wouldn't happen normally but just incase someone edits binds to be three or more fun guys
 		if (binds.length < this.binds.length)
 		{
@@ -450,12 +458,14 @@ class ControlsOption extends FlxSpriteContainer
 	{
 		final inputID:Int = getBinds(device)[index];
 		final alpha = binds.members[index].alpha;
+		
 		binds.members[index].alpha = 1.0;
 		binds.members[index].changeText(switch device
 		{
 			case Keys: InputFormatter.getKeyName(inputID);
 			case Gamepad(id): FlxG.gamepads.getByID(id).getInputLabel(inputID).toUpperCase();
 		});
+		
 		binds.members[index].alpha = alpha;
 	}
 	
@@ -468,7 +478,9 @@ class ControlsOption extends FlxSpriteContainer
 	{
 		final binds:Array<Int> = getBinds(device);
 		final altIndex = binds.indexOf(inputID);
+		
 		if (altIndex != -1) binds[altIndex] = binds[index];
+		
 		binds[index] = inputID;
 		refreshBind(device, index);
 	}
