@@ -24,6 +24,8 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 	
 	static inline function posText()
 	{
+		if (instance == null) return;
+		
 		var count = 0;
 		instance.forEachAlive((temp:DebugText) -> {
 			temp.y = 25 + (temp.height * count);
@@ -33,7 +35,7 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 	
 	static function grabText(message:String, colour:FlxColor):DebugText
 	{
-		if (!DebugText.map.exists(message))
+		if (!DebugText.map.exists(message) && instance != null)
 		{
 			final ret = instance.recycle(DebugText, () -> new DebugText(message, colour));
 			return ret;
@@ -41,11 +43,9 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 		else
 		{
 			var ret = DebugText.map.get(message);
-			ret.traceCount += 1;
-			ret.disableTime = 4;
-			ret.alpha = 1;
+			ret?.resetValues();
 			
-			return ret;
+			return ret ?? new DebugText(message, colour);
 		}
 	}
 	
@@ -101,6 +101,13 @@ class DebugText extends FlxText
 	public function setText(input:String)
 	{
 		this._trace = input;
+	}
+	
+	public function resetValues()
+	{
+		this.traceCount += 1;
+		this.disableTime = 4;
+		this.alpha = 1;
 	}
 	
 	override function update(elapsed:Float)
