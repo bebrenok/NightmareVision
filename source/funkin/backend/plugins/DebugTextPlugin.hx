@@ -8,7 +8,7 @@ import flixel.addons.transition.FlxTransitionableState;
 /**
  * Plugin that shows debug content in game without the need of a console
  */
-@:nullSafety
+// @:nullSafety
 class DebugTextPlugin extends FlxTypedGroup<DebugText>
 {
 	static var instance:Null<DebugTextPlugin> = null;
@@ -22,22 +22,47 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 		}
 	}
 	
+	static inline function posText(text:DebugText)
+	{
+		// text.y = 25;
+		var count = 0;
+		instance.forEachAlive((temp:DebugText) -> {
+			temp.y = 25 + (temp.height * count);
+			count++;
+		});
+	}
+	
+	static function grabText(message:String, colour:FlxColor):DebugText
+	{
+		if (!DebugText.map.exists(message))
+		{
+			final ret = instance.recycle(DebugText, () -> new DebugText(message, colour));
+			return ret;
+		}
+		else
+		{
+			var ret = DebugText.map.get(message);
+			ret.traceCount += 1;
+			ret.disableTime = 4;
+			ret.alpha = 1;
+			posText(ret);
+			
+			return ret;
+		}
+	}
+	
 	public static function addText(message:String, colour:FlxColor = FlxColor.WHITE)
 	{
 		if (instance == null) return;
 		
-		final text = instance.recycle(DebugText, () -> new DebugText(message, colour));
-		text.text = message;
-		text.color = colour;
+		final text = grabText(message, colour);
+		text.setText(message);
 		text.disableTime = 4;
 		text.alpha = 1;
 		
-		instance.insert(0, text);
+		posText(text);
 		
-		instance.forEachAlive((spr:DebugText) -> {
-			spr.y += text.height;
-		});
-		text.y = 25;
+		instance.insert(0, text);
 		
 		instance.camera = CameraUtil.lastCamera;
 	}
@@ -46,34 +71,65 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 	{
 		if (instance == null) return;
 		
-		instance.forEach(spr -> spr?.destroy());
-		
-		instance.clear();
+		instance.clear(); // THIS is the correct fix
+		DebugText.clearMap();
 	}
 }
 
 class DebugText extends FlxText
 {
+	public static var map:Map<String, DebugText> = new Map<String, DebugText>();
+	
 	public var disableTime:Float = 4;
+	public var traceCount:Int = 1;
+	public var markupColor:FlxColor;
+	
+	private var _trace = 'No trace exists';
 	
 	public function new(text:String, color:FlxColor = FlxColor.WHITE)
 	{
 		super(10, 10, FlxG.width, text, 16);
+		
 		setFormat(Paths.DEFAULT_FONT, 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scrollFactor.set();
 		borderSize = 1;
 		this.color = color;
+		
+		this._trace = text;
+		
+		if (!map.exists(text)) map.set(text, this);
+	}
+	
+	public function setText(input:String)
+	{
+		this._trace = input;
 	}
 	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		
+		if (this != null)
+		{
+			this.text = '${traceCount > 1 ? '[$traceCount] - ' : ''}$_trace';
+		}
+		
 		disableTime -= elapsed;
 		if (y >= FlxG.height) kill();
+		
 		if (disableTime <= 0)
 		{
+			map.remove(_trace);
 			kill();
 		}
 		else if (disableTime < 1) alpha = disableTime;
+	}
+	
+	public static function clearMap()
+	{
+		for (i in map)
+			i?.destroy();
+			
+		map.clear();
 	}
 }
