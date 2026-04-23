@@ -37,6 +37,10 @@ jobs: # FUCK MY LIFE BROOOOO
                 haxelib install hxpkg --quiet
                 haxelib run hxpkg install
                 haxelib run lime rebuild cpp
+            - name: Rebuild lime properly
+              run: |
+                haxelib run lime rebuild hxcpp windows -clean
+                haxelib run lime rebuild lime windows -clean
             - name: Compile build
               run: haxelib run lime build windows -D ${{inputs.buildFlags}}
             - name: Publish artifact
