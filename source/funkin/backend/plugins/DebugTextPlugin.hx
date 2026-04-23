@@ -8,7 +8,7 @@ import flixel.addons.transition.FlxTransitionableState;
 /**
  * Plugin that shows debug content in game without the need of a console
  */
-// @:nullSafety
+@:nullSafety
 class DebugTextPlugin extends FlxTypedGroup<DebugText>
 {
 	static var instance:Null<DebugTextPlugin> = null;
@@ -22,9 +22,8 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 		}
 	}
 	
-	static inline function posText(text:DebugText)
+	static inline function posText()
 	{
-		// text.y = 25;
 		var count = 0;
 		instance.forEachAlive((temp:DebugText) -> {
 			temp.y = 25 + (temp.height * count);
@@ -45,7 +44,6 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 			ret.traceCount += 1;
 			ret.disableTime = 4;
 			ret.alpha = 1;
-			posText(ret);
 			
 			return ret;
 		}
@@ -60,7 +58,7 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 		text.disableTime = 4;
 		text.alpha = 1;
 		
-		posText(text);
+		posText();
 		
 		instance.insert(0, text);
 		
@@ -71,7 +69,7 @@ class DebugTextPlugin extends FlxTypedGroup<DebugText>
 	{
 		if (instance == null) return;
 		
-		instance.clear(); // THIS is the correct fix
+		instance.clear();
 		DebugText.clearMap();
 	}
 }
