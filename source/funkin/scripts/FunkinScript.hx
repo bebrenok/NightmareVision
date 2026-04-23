@@ -65,28 +65,23 @@ class FunkinScript extends IrisEx implements IFlxDestroyable
 			return tempName;
 		}
 		
-		Iris.warn = (x, ?pos) -> {
+		inline function logByStatus(x:String, pos:haxe.PosInfos, sev:Severity)
+		{
 			final output:String = formatFileLoc(pos.fileName, pos.lineNumber, x);
-			
-			DebugTextPlugin.addText(Std.string(output), Logger.getHexColourFromSeverity(WARN));
-			
-			Iris.logLevel(ERROR, x, pos);
+			DebugTextPlugin.addText(Std.string(output), Logger.getHexColourFromSeverity(sev));
+			Iris.logLevel(sev, x, pos);
+		}
+		
+		Iris.warn = (x, ?pos) -> {
+			logByStatus(x, pos, WARN);
 		}
 		
 		Iris.error = (x, ?pos) -> {
-			final output:String = formatFileLoc(pos.fileName, pos.lineNumber, x);
-			
-			DebugTextPlugin.addText(Std.string(output), Logger.getHexColourFromSeverity(ERROR));
-			
-			Iris.logLevel(NONE, x, pos);
+			logByStatus(x, pos, ERROR);
 		}
 		
 		Iris.print = (x, ?pos) -> {
-			final output:String = formatFileLoc(pos.fileName, pos.lineNumber, x);
-			
-			DebugTextPlugin.addText(Std.string(output), Logger.getHexColourFromSeverity(PRINT));
-			
-			Iris.logLevel(NONE, x, pos);
+			logByStatus(x, pos, NONE);
 		}
 	}
 	
