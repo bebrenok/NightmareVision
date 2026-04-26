@@ -208,7 +208,7 @@ class PlayState extends MusicBeatState
 	public var gf:Character;
 	
 	/**
-		Reference to the current girlfriend
+		Reference to the current boyfriend
 	**/
 	public var boyfriend:Character;
 	
