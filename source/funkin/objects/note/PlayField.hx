@@ -297,7 +297,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 			}
 		}
 		
-		if (ClientPrefs.guitarHeroSustains && !note.isSustainNote)
+		if (!note.isSustainNote)
 		{
 			for (sustain in note.tail)
 				sustain.blockHit = false; // makes the hold note active when you press the base note
@@ -438,7 +438,7 @@ class PlayField extends FlxTypedContainer<StrumNote>
 		if (noteScriptRet != ScriptConstants.STOP_FUNC) PlayState.instance.scripts.call('noteMiss', scriptArgs, false, [note.noteType]);
 		
 		// hold note missing stuff, makes the hold unhittable (and kills it, might make it just transparent if i can fix some stuff)
-		if (ClientPrefs.guitarHeroSustains && !note.hitCausesMiss && !note.canMiss)
+		if (!note.hitCausesMiss && !note.canMiss)
 		{
 			final tail = (note.isSustainNote ? note.parent.tail : note.tail);
 			for (sustain in tail)

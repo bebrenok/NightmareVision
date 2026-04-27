@@ -67,6 +67,9 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 	public var tail:Array<Note> = []; // for sustains
 	public var parent:Note;
 	
+	// 0 to 1, 1 = missed
+	public var coyoteProgress:Float = 0;
+	
 	/**
 	 * if true, the note cannot be hit.
 	 * 
@@ -268,7 +271,7 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 			
 			animSuffix = prevNote.animSuffix;
 			
-			missHealth = ClientPrefs.guitarHeroSustains ? 0 : 0.0475;
+			missHealth = 0.0475;
 			
 			if (prevNote.isSustainNote)
 			{
@@ -455,8 +458,10 @@ class Note extends FunkinSprite implements funkin.game.modchart.IModNote
 		var absDiff = Math.abs(diff);
 		canBeHit = absDiff <= actualHitbox;
 		
-		if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
-		
+		if (!isSustainNote) if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset && !wasGoodHit) tooLate = true;
+		else if (parent != null) // coyote timer
+			if (parent.coyoteProgress >= 1 && !wasGoodHit) tooLate = true;
+			
 		if (tooLate && !inEditor)
 		{
 			if (alpha > 0.3) alpha = 0.3;
