@@ -5,7 +5,7 @@
             {
                 "name": "flixel",
                 "link": "https://github.com/FunkinCrew/flixel",
-                "branch": "622bb65e7f49f0e1a03826b6593369d3ad5e54fa"
+                "branch": "59c37065ff9be2049f425be4d6d975b798c5ae4b"
             },
             {
                 "name": "flixel-addons",
@@ -19,7 +19,7 @@
             {
                 "name": "flixel-animate",
                 "link": "https://github.com/MaybeMaru/flixel-animate",
-                "branch": "4fb307acac9379966dfa0b7619b37036fcd39b32"
+                "branch": "75870e160677ca4d310df94d775e7fad43c767ae"
             },
             {
                 "name": "hscript",
@@ -37,7 +37,7 @@
             {
                 "name": "hxcpp",
                 "link": "https://github.com/FunkinCrew/hxcpp",
-                "branch": "bfe01edc20cdc54fe7f54f1f2124b8959646144c"
+                "branch": "c79483a7bf1c0afa77d35a8c564cecac83d5c890"
             },
             {
                 "name": "hxvlc",
@@ -46,12 +46,12 @@
             {
                 "name": "lime",
                 "link": "https://github.com/FunkinCrew/lime",
-                "branch": "7956a87ff8622d8b176bee77f766ee46f04ff6e6"
+                "branch": "d7588929ad15e373070f1a40a9f57a704c0bbf5d"
             },
             {
                 "name": "openfl",
                 "link": "https://github.com/FunkinCrew/openfl",
-                "branch": "a85b45f21c7e1a4c19663a193bf4ea961faf0dfa"
+                "branch": "15aff01f6edd05f08e0549e3311cd37dc58e4408"
             },
             {
                 "name": "hxdiscord_rpc",
