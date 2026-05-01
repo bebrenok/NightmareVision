@@ -269,8 +269,9 @@ class PlayableSong extends VocalGroup
 					playerSound = Paths.voices(data.song, null);
 				}
 				if (playerSound != null) addPlayerVocals(new FlxSoundEx().loadEmbedded(playerSound));
-				
+				for(iOppVoices in 0...oppVoices.length){
 				final opponentSound = Paths.voices(data.song, oppVoices);
+				}
 				if (opponentSound != null) addOpponentVocals(new FlxSoundEx().loadEmbedded(opponentSound));
 				
 				splitVocals = playerVocals.length != 0 && opponentVocals.length != 0;
