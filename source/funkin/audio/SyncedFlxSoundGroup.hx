@@ -224,7 +224,7 @@ class PlayableSong extends VocalGroup
 	public var inst:Null<FlxSound> = null;
 	public var trackSwap:Bool = false;
 	public var splitVocals:Bool = false;
-	var oppVoices:Array<String> = ["opp", "opponent"]
+	var oppVoices:Array<String> = ["opp", "opponent"];
 	
 	public function populate(?data:Song):Void
 	{
