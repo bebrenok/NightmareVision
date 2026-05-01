@@ -224,6 +224,7 @@ class PlayableSong extends VocalGroup
 	public var inst:Null<FlxSound> = null;
 	public var trackSwap:Bool = false;
 	public var splitVocals:Bool = false;
+	var oppVoices:Array<String> = ["opp", "opponent"]
 	
 	public function populate(?data:Song):Void
 	{
@@ -269,7 +270,7 @@ class PlayableSong extends VocalGroup
 				}
 				if (playerSound != null) addPlayerVocals(new FlxSoundEx().loadEmbedded(playerSound));
 				
-				final opponentSound = Paths.voices(data.song, 'opp');
+				final opponentSound = Paths.voices(data.song, oppVoices);
 				if (opponentSound != null) addOpponentVocals(new FlxSoundEx().loadEmbedded(opponentSound));
 				
 				splitVocals = playerVocals.length != 0 && opponentVocals.length != 0;
